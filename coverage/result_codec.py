@@ -4,8 +4,11 @@ from fractions import Fraction
 from .coverage_union import geometry_from_data, require_keys
 from .region_validation import validate_region
 from .rings import identifier
+from .priority_validation import validate_priority_structure
 
 REPORT_FORMAT_VERSION = 1
+PRIORITY_FORMAT_VERSION = 2
+SUPPORTED_REPORT_FORMATS = (REPORT_FORMAT_VERSION, PRIORITY_FORMAT_VERSION)
 
 def encode_fraction(value):
     if type(value) is not Fraction:
@@ -60,8 +63,11 @@ def unpack(value):
     raise ValueError('unsupported JSON value')
 
 def validate_report_structure(report):
-    require_keys(report, ('format', 'report_id', 'batch_id', 'binding', 'inputs', 'components', 'measurements', 'receipt'))
-    if type(report['format']) is not int or report['format'] != REPORT_FORMAT_VERSION:
+    keys = ['format', 'report_id', 'batch_id', 'binding', 'inputs', 'components', 'measurements', 'receipt']
+    if isinstance(report, dict) and report.get('format') == PRIORITY_FORMAT_VERSION:
+        keys.append('priority')
+    require_keys(report, keys)
+    if type(report['format']) is not int or report['format'] not in SUPPORTED_REPORT_FORMATS:
         raise ValueError('unsupported report format')
     identifier(report['report_id'])
     identifier(report['batch_id'])
@@ -113,6 +119,8 @@ def validate_report_structure(report):
     require_keys(report['receipt'], ('report_id', 'batch_id', 'status'))
     if report['receipt'] != {'report_id': report['report_id'], 'batch_id': report['batch_id'], 'status': 'published'}:
         raise ValueError('receipt binding mismatch')
+    if report['format'] == PRIORITY_FORMAT_VERSION:
+        validate_priority_structure(report, geometry)
     return geometry
 
 def encode_report(report):

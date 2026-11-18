@@ -6,6 +6,7 @@ from .intersections import point_on_segment, parameter_on_segment, segment_inter
 from .coverage_union import geometry_from_data
 from .areas import area_items, coverage_area
 from .boundary_measure import boundary_measurements
+from .priority_validation import reconcile_priority
 
 @dataclass(frozen=True)
 class ReconciliationResult:
@@ -47,6 +48,8 @@ def reconcile_report(report):
     geometry = validate_report_structure(report)
     verify_measurement_items(report, geometry)
     verify_source_spans(report, geometry)
+    if report['format'] == 2:
+        reconcile_priority(report, geometry)
     boundaries = [b for c in geometry.components for b in c.boundaries]
     return ReconciliationResult(len(geometry.components), len(boundaries),
         sum(len(b.segments) for b in boundaries), coverage_area(geometry))

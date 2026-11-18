@@ -2,6 +2,6 @@
   "version": 1,
   "kind": "cli",
   "setup": [],
-  "verify": ["python3", "-B", "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py", "-v"],
-  "demo": ["python3", "-B", "-m", "tests.test_delivery", "--demo"]
+  "verify": ["python3", "-B", "priority_cases.py", "--verify"],
+  "demo": ["python3", "-B", "priority_cases.py", "--demo"]
 }

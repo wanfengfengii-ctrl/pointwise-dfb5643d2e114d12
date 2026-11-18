@@ -6,6 +6,7 @@ from .boundary_measure import boundary_measurements
 from .publication import publication_binding, publish_report
 from .database import current_archive
 from .reconciliation import reconcile_report
+from .result_codec import REPORT_FORMAT_VERSION
 
 def assemble_report(report_id, binding, geometry):
     report = {
@@ -29,7 +30,10 @@ def build_report(report_id, batch_id):
     if previous is not None:
         if previous != batch_id:
             raise ValueError('report identity is already bound')
-        return read_report(report_id)
+        saved = read_report(report_id)
+        if saved['format'] != REPORT_FORMAT_VERSION:
+            raise ValueError('report identity is bound to a different report kind')
+        return saved
     current_archive().checkpoint('report.before_compute')
     geometry = build_coverage(binding.revisions)
     report = assemble_report(report_id, binding, geometry)
