@@ -1,0 +1,11 @@
+{
+  "actual": {
+    "area": "20",
+    "components": 1
+  },
+  "downstream": {
+    "point": ["4/3", "0"],
+    "parameters": ["1/3"],
+    "offline_area": "20"
+  }
+}

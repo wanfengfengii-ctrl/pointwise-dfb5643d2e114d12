@@ -1,0 +1,8 @@
+{
+  "python": "3.11",
+  "dependencies": [],
+  "runtime_manifest": ".pointwise-runtime.json",
+  "archive_policy": "caller-supplied path; verification and demo use test temporary directories",
+  "verify": ["python3", "-B", "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py", "-v"],
+  "demo": ["python3", "-B", "-m", "tests.test_delivery", "--demo"]
+}
